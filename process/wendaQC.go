@@ -1,7 +1,6 @@
 package process
 
 import (
-	"errors"
 	"fmt"
 	"path/filepath"
 	"strconv"
@@ -70,9 +69,9 @@ func (wc *WendaQC) setWendaDetail(rows [][]interface{}, dds []*iris.DeliveryDeta
 	//新增wenda_delivery_detail的欄位
 	for i, row := range rows {
 
-		postalcode := strings.Trim(row[postalcol.Col].(string), " ")
+		postalcode := strings.TrimSpace(row[postalcol.Col].(string))
 		if len(postalcode) < 3 {
-			return errors.New("postalcode is not format")
+			return fmt.Errorf("Row: %d, postalcode is not format", i+1)
 		}
 
 		//穩達的宅配區號只取前3碼
