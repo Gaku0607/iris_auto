@@ -25,14 +25,13 @@ func main() {
 		iris.ErrChan <- err
 	}
 
+	//初始化匯出格式
+	formatter.InitExportValue()
+
 	//設置環境
 	augo.SetSystemVersion(augo.MacOS)
 	//設置log標頭
 	augo.SetLogTitle("IRIS")
-
-	//初始化匯出格式
-	formatter.InitExportValue()
-	formatter.InitExportFormula()
 
 	c := augo.DefautCollector(
 		augo.ResultLogKey(

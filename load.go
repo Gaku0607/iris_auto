@@ -17,10 +17,7 @@ import (
 
 //從配置文件中加載所有環境變數
 func InitEnvironment() error {
-
-	file, _ := filepath.Abs("../main/.env")
-
-	if err := godotenv.Load(file); err != nil {
+	if err := godotenv.Load(model.EnvPath); err != nil {
 		return err
 	}
 	//配置文件地址

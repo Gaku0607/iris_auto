@@ -12,7 +12,7 @@ var Services_Dir string //服務資料夾
 
 var Result_Path string //完成時返回地址
 
-var EnvPath = "./.env"
+var EnvPath = "/Users/gaku/Documents/GitHub/iris_auto/main/.env"
 
 //**************************************
 //***************EnvSources*************

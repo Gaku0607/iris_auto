@@ -1,5 +1,0 @@
-package formatter
-
-func InitExportFormula() {
-
-}
