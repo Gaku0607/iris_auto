@@ -108,6 +108,7 @@ func (s *ShippingDetail) merge() error {
 				mergemap[wh.Rows[i][s.janCodecol].(string)] = append(mergemap[wh.Rows[i][s.janCodecol].(string)],
 					&T{area: wh.Area, data: wh.Rows[i], remainder: remainder})
 				wh.deleteItem(i)
+				i--
 			}
 		}
 	}

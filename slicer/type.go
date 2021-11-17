@@ -1,6 +1,7 @@
 package slicer
 
 import (
+	"errors"
 	"strconv"
 	"strings"
 
@@ -31,16 +32,25 @@ func NewSizeCut(num int) Slicer {
 
 func (n *SizeCut) Cut(s *excelgo.Sourc, rows [][]string) ([][]string, [][]string, error) {
 
-	var (
-		big [][]string
-	)
-	col := s.GetCol(model.Environment.SE.SizeSpan)
+	if len(rows) == 0 {
+		return nil, nil, errors.New("data is empty")
+	}
 
-	n.sort(rows, col.Col)
+	var big [][]string
+
+	sizecol := s.GetCol(model.Environment.SE.SizeSpan)
+
+	//貨品size正序排序
+	n.sort(rows, sizecol.Col)
+
+	lastsize, _ := strconv.Atoi(rows[len(rows)-1][sizecol.Col])
+	if lastsize > n.norm {
+		return rows, make([][]string, 0), nil
+	}
 
 	for i, row := range rows {
-		size, _ := strconv.Atoi(row[col.Col])
-		if n.norm > size {
+		size, _ := strconv.Atoi(row[sizecol.Col])
+		if n.norm >= size {
 			big = rows[:i]
 			rows = rows[i:]
 			break
