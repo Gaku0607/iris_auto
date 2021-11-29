@@ -33,7 +33,7 @@ func main() {
 	//設置log標頭
 	augo.SetLogTitle("IRIS")
 
-	c := augo.DefautCollector(
+	c := augo.NewCollector(
 		augo.ResultLogKey(
 			func(c *augo.Context) augo.LogKey {
 				key := make(augo.LogKey)
@@ -53,6 +53,7 @@ func main() {
 		augo.MaxThread(2),
 		augo.ScanIntval(time.Second*2),
 		augo.SetCollector(c),
+		augo.DeleteVisitedIntval(time.Second*10),
 	)
 
 	engine.Run()
