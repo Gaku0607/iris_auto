@@ -3,6 +3,7 @@ package tool
 import (
 	"os"
 	"regexp"
+	"strings"
 )
 
 func ErrMsgs(assertion bool, msg string) {
@@ -38,4 +39,14 @@ func IsExist(path string) bool {
 		return false
 	}
 	return true
+}
+
+func GetUniqueCode(origincode string) string {
+	origincode = strings.TrimSpace(origincode)
+	//取注文番號前14碼
+	if (strings.Contains(origincode, "-") || origincode[len(origincode)-1] == 'A') && len(origincode) >= 14 {
+		return origincode[:14]
+	} else {
+		return origincode
+	}
 }

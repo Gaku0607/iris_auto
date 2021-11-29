@@ -53,7 +53,7 @@ func main() {
 		augo.MaxThread(2),
 		augo.ScanIntval(time.Second*2),
 		augo.SetCollector(c),
-		augo.DeleteVisitedIntval(time.Second*10),
+		augo.DeleteVisitedIntval(time.Second*time.Duration(model.Delete_Intval)),
 	)
 
 	engine.Run()

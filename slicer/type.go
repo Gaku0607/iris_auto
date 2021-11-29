@@ -151,7 +151,7 @@ func (n *CutFile) Merge(target, other [][]string, status int) ([][]string, [][]s
 			val := t[col]
 			for i := 0; i < len(other); i++ {
 				//宅配（小貨品）句尾可能含有Ａ必須先排除比較
-				if val == strings.TrimRight(other[i][col], "A") {
+				if val == other[i][col] || val == strings.TrimRight(other[i][col], "A") {
 					ts = append(ts, other[i])
 					other = append(other[:i], other[i+1:]...)
 					i--

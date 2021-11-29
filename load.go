@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strconv"
 
 	"github.com/Gaku0607/iris_auto/model"
 	"github.com/joho/godotenv"
@@ -17,11 +18,22 @@ import (
 
 //從配置文件中加載所有環境變數
 func InitEnvironment() error {
+	var err error
 	if err := godotenv.Load(model.EnvPath); err != nil {
 		return err
 	}
 	//配置文件地址
 	if err := loadPath(); err != nil {
+		return err
+	}
+
+	Intval := os.Getenv("delete_intval")
+	if Intval == "" {
+		return errors.New("DeleteIntval is not exist")
+	}
+
+	model.Delete_Intval, err = strconv.Atoi(Intval)
+	if err != nil {
 		return err
 	}
 
@@ -35,7 +47,7 @@ func InitEnvironment() error {
 func loadPath() error {
 	model.EnvironmentDir = os.Getenv("environment_dir")
 	if model.EnvironmentDir == "" {
-		return errors.New("EnvironmentDir is not exit")
+		return errors.New("EnvironmentDir is not exist")
 	}
 
 	model.Services_Dir = os.Getenv("services_dir")

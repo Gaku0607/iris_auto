@@ -1,10 +1,14 @@
 package model
 
-import "github.com/Gaku0607/excelgo"
+import (
+	"github.com/Gaku0607/excelgo"
+)
 
 //**************************************
 //***************EnvPaths***************
 //**************************************
+
+var Delete_Intval int
 
 var EnvironmentDir string //配置文件資料夾地址
 
