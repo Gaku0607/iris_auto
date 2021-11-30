@@ -9,7 +9,7 @@ import (
 
 	"github.com/Gaku0607/augo"
 	"github.com/Gaku0607/excelgo"
-	iris "github.com/Gaku0607/iris_auto"
+	"github.com/Gaku0607/iris_auto/dividewarehouse"
 	"github.com/Gaku0607/iris_auto/model"
 	"github.com/Gaku0607/iris_auto/store"
 )
@@ -28,10 +28,13 @@ func (wc *WendaQC) WendaMergeBoxAndExportList(c *augo.Context) {
 
 	sourc, _ := c.Get(model.SOURCE_KEY)
 	csvsourc, _ := c.Get(model.CSV_KEY)
+	confirmedlist, _ := c.Get(model.CONFIRMED_LIST)
 
 	s := sourc.(*excelgo.Sourc)
 	csv := csvsourc.(*excelgo.Sourc)
+	wc.ConfirmedList = confirmedlist.([]string)
 
+	//進行商品分倉
 	rows, dds, err := wc.DividWarehouse(s, csv)
 	if err != nil {
 		c.AbortWithError(err)
@@ -61,7 +64,7 @@ func (wc *WendaQC) WendaMergeBoxAndExportList(c *augo.Context) {
 	}
 }
 
-func (wc *WendaQC) setWendaDetail(rows [][]interface{}, dds []*iris.DeliveryDetail, sf *excelgo.Sourc) error {
+func (wc *WendaQC) setWendaDetail(rows [][]interface{}, dds []*dividewarehouse.DeliveryDetail, sf *excelgo.Sourc) error {
 
 	// 郵遞區號欄位
 	postalcol := sf.GetCol(wc.IDS.PostalCodeSpan)

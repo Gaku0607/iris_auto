@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"path/filepath"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/Gaku0607/augo"
 	"github.com/Gaku0607/excelgo"
-	iris "github.com/Gaku0607/iris_auto"
+	"github.com/Gaku0607/iris_auto/dividewarehouse"
 	"github.com/Gaku0607/iris_auto/model"
 	"github.com/Gaku0607/iris_auto/store"
+	"github.com/Gaku0607/iris_auto/tool"
 )
 
 type ZhaipeiQC struct {
@@ -27,6 +27,9 @@ func NewZhaipeiQC(detail *DetailQC) *ZhaipeiQC {
 func (z *ZhaipeiQC) OrginZhaipeiQC(c *augo.Context) {
 	sourc, _ := c.Get(model.SOURCE_KEY)
 	csvsourc, _ := c.Get(model.CSV_KEY)
+	confirmedlist, _ := c.Get(model.CONFIRMED_LIST)
+
+	z.ConfirmedList = confirmedlist.([]string)
 	if err := z.exportQC(sourc.(*excelgo.Sourc), csvsourc.(*excelgo.Sourc), z.IDS.ZhaipeiMergeBox.MasterFileBase); err != nil {
 		c.AbortWithError(err)
 	}
@@ -35,10 +38,14 @@ func (z *ZhaipeiQC) OrginZhaipeiQC(c *augo.Context) {
 //第三方宅配ＱＣ
 func (z *ZhaipeiQC) ThirdPartyQC(c *augo.Context) {
 	sourc, _ := c.Get(model.SOURCE_KEY)
+	confirmedlist, _ := c.Get(model.CONFIRMED_LIST)
+	csvsourc, _ := c.Get(model.CSV_KEY)
+
 	s := sourc.(*excelgo.Sourc)
+	z.ConfirmedList = confirmedlist.([]string)
+
 	s.SortOrder = z.IDS.ZhaipeiMergeBox.ThirdPartySort
 
-	csvsourc, _ := c.Get(model.CSV_KEY)
 	if err := z.exportQC(s, csvsourc.(*excelgo.Sourc), z.IDS.ZhaipeiMergeBox.ThirdPartyMasterFileBase); err != nil {
 		c.AbortWithError(err)
 	}
@@ -68,7 +75,7 @@ func (z *ZhaipeiQC) exportQC(s, csv *excelgo.Sourc, filebase string) error {
 	return nil
 }
 
-func (z *ZhaipeiQC) setZhaipeiDetail(rows [][]interface{}, dds []*iris.DeliveryDetail, sf *excelgo.Sourc) error {
+func (z *ZhaipeiQC) setZhaipeiDetail(rows [][]interface{}, dds []*dividewarehouse.DeliveryDetail, sf *excelgo.Sourc) error {
 
 	uniquecodecol := sf.GetCol(z.IDS.UniqueCodeSpan)
 	jancodecol := sf.GetCol(z.IDS.ZhaipeiMergeBox.JanCodeSpan)
@@ -76,11 +83,7 @@ func (z *ZhaipeiQC) setZhaipeiDetail(rows [][]interface{}, dds []*iris.DeliveryD
 	{
 		for i, row := range rows {
 			//取注文番號前14碼
-			if strings.Contains(row[uniquecodecol.Col].(string), "-") && len(row[uniquecodecol.Col].(string)) >= 14 {
-				dds[i].DeliveryOrder = row[uniquecodecol.Col].(string)[:14]
-			} else {
-				dds[i].DeliveryOrder = row[uniquecodecol.Col].(string)
-			}
+			dds[i].DeliveryOrder = tool.GetUniqueCode(row[uniquecodecol.Col].(string))
 			//取商品尾碼
 			icode := row[jancodecol.Col].(string)
 			dds[i].ItemCode = icode[len(icode)-1:]

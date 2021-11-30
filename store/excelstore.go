@@ -36,7 +36,7 @@ func (e *ExcelStore) ExportShippList(foramtfile *excelize.File, shippDetail *shi
 
 	for area, wh := range shippDetail.Areas {
 
-		if iris.Next2 == area {
+		if iris.NEXT2 == area {
 			sheetid = 0
 		} else {
 			sheetid = 1
@@ -123,7 +123,7 @@ func (e *ExcelStore) exportshipplist(f *excelize.File, area *shipplist.Warehouse
 		return err
 	}
 	//負責人
-	if err := e.addCell(sheetname, sl.PartyPosition, "BySystem", f); err != nil {
+	if err := e.addCell(sheetname, sl.PartyPosition, "System", f); err != nil {
 		return err
 	}
 

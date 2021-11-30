@@ -21,7 +21,7 @@ func Routers(c *augo.Collector) {
 	}
 
 	//QC
-	QC_Group := c.Group(absoluteServicePath(augo.GetPathChar()), middleware.VerificationPath, middleware.InitSourcFiles)
+	QC_Group := c.Group(absoluteServicePath(augo.GetPathChar()), middleware.VerificationPath, middleware.InitFiles)
 	{
 		qc_detail := process.NewDetailQC()
 

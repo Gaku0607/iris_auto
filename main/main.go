@@ -11,9 +11,9 @@ import (
 )
 
 func main() {
-	// if err := iris.WriteDefaultConfig(); err != nil {
-	// 	panic(err.Error())
-	// }
+	if err := iris.WriteDefaultConfig(); err != nil {
+		panic(err.Error())
+	}
 
 	go iris.RecoveryPrint()
 

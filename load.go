@@ -116,6 +116,15 @@ func load(path string) ([]byte, error) {
 }
 
 func loadDeliverAria() error {
+
+	const (
+		CityCol int = iota
+		PartitionCol
+		PostalCodeCol
+		AreaCodeCol
+		PlaceCol
+	)
+
 	file, err := excelize.OpenFile(model.Environment.IDS.WendaMergeBox.DeliveryPath)
 	if err != nil {
 		return err

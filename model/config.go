@@ -86,15 +86,16 @@ type SlicerParms struct {
 }
 
 type ImportDocumentsParms struct {
-	CsvSourc        `json:"csv_sourc"`
-	BoxTotalFormula string `json:"box_total_formula"`
-	BoxCountSpan    string `json:"box_count_span"`
-	RemarkSpan      string `json:"remark_span"`      //備註
-	PostalCodeSpan  string `json:"postal_code_span"` // 郵遞區號
-	TotalSpan       string `json:"total_span"`       //商品數
-	ItemCodeSpan    string `json:"item_code_span"`   //商品6碼
-	QuantitySpan    string `json:"quantity_span"`    //商品入數
-	UniqueCodeSpan  string `json:"unique_code_span"` //客戶訂單碼 （注文番號）
+	CsvSourc           `json:"csv_sourc"`
+	ToBeConfirmedSheet string `json:"to_be_confirmed_sheet"` //待確認頁籤
+	BoxTotalFormula    string `json:"box_total_formula"`
+	BoxCountSpan       string `json:"box_count_span"`
+	RemarkSpan         string `json:"remark_span"`      //備註
+	PostalCodeSpan     string `json:"postal_code_span"` // 郵遞區號
+	TotalSpan          string `json:"total_span"`       //商品數
+	ItemCodeSpan       string `json:"item_code_span"`   //商品6碼
+	QuantitySpan       string `json:"quantity_span"`    //商品入數
+	UniqueCodeSpan     string `json:"unique_code_span"` //客戶訂單碼 （注文番號）
 
 	//宅配通所使用併箱格式
 	ZhaipeiMergeBox struct {

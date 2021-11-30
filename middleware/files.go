@@ -7,11 +7,15 @@ import (
 	"github.com/Gaku0607/iris_auto/tool"
 )
 
-func InitSourcFiles(c *augo.Context) {
+func InitFiles(c *augo.Context) {
 	sourc, _ := c.Get(model.SOURCE_KEY)
 	s := sourc.(*excelgo.Sourc)
 
-	var totalrows [][]string
+	var (
+		confirmedlist      []string
+		totalrows          [][]string
+		ToBeConfirmedSheet = model.Environment.IDS.ToBeConfirmedSheet
+	)
 
 	files, err := excelgo.OpenFiles(c.Request.Files)
 	if err != nil {
@@ -22,6 +26,17 @@ func InitSourcFiles(c *augo.Context) {
 	for _, f := range files {
 
 		if tool.IsCsvFormat(f.Path()) {
+
+			if xlsxcsv, ok := f.(*excelgo.XlsxFile); ok && xlsxcsv.File.GetSheetIndex(ToBeConfirmedSheet) != -1 {
+				list, _ := xlsxcsv.File.GetRows(ToBeConfirmedSheet)
+				confirmedlist = make([]string, len(list))
+				for i, code := range list {
+					if len(code) > 0 {
+						confirmedlist[i] = code[0]
+					}
+				}
+			}
+
 			continue
 		}
 
@@ -35,4 +50,5 @@ func InitSourcFiles(c *augo.Context) {
 
 	s.Rows = totalrows
 	c.Set(model.SOURCE_KEY, s)
+	c.Set(model.CONFIRMED_LIST, confirmedlist)
 }

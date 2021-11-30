@@ -6,12 +6,14 @@ import (
 	"strings"
 
 	"github.com/Gaku0607/excelgo"
-	iris "github.com/Gaku0607/iris_auto"
+	"github.com/Gaku0607/iris_auto/dividewarehouse"
 	"github.com/Gaku0607/iris_auto/model"
+	"github.com/Gaku0607/iris_auto/tool"
 )
 
 type DetailQC struct {
-	IDS model.ImportDocumentsParms
+	IDS           model.ImportDocumentsParms
+	ConfirmedList []string
 }
 
 func NewDetailQC() *DetailQC {
@@ -19,31 +21,70 @@ func NewDetailQC() *DetailQC {
 }
 
 //獲取穩打的宅配細項
-func (d *DetailQC) DividWarehouse(sf, csv *excelgo.Sourc) ([][]interface{}, []*iris.DeliveryDetail, error) {
+func (d *DetailQC) DividWarehouse(sf, csv *excelgo.Sourc) ([][]interface{}, []*dividewarehouse.DeliveryDetail, error) {
 
 	itemcodecol := sf.GetCol(d.IDS.ItemCodeSpan)
 	totalcol := sf.GetCol(d.IDS.TotalSpan)
+	uniquecodecol := sf.GetCol(d.IDS.UniqueCodeSpan)
 
-	rows, err := sf.Transform(sf.GetRows())
-	if err != nil {
-		return nil, nil, err
-	}
-	//依序 合計數.商品碼 進行排序後計算
-	excelgo.Sort(rows, totalcol.Col, excelgo.PositiveOrder)
-	excelgo.Sort(rows, itemcodecol.Col, excelgo.PositiveOrder)
-
-	sws, err := iris.NewDivideWarehouses(csv)
+	rows, err := sf.Transform(sf.Rows)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	var dds []*iris.DeliveryDetail = make([]*iris.DeliveryDetail, len(rows))
+	//獲取ＱＣ單相關信息欄位
+	dds, err := d.getDetail(len(rows))
+	if err != nil {
+		return nil, nil, err
+	}
+
+	sws, err := dividewarehouse.NewDivideWarehouses(csv)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var orders dividewarehouse.MultipleItemOrders
+
+	for i, row := range rows {
+
+		if d.isConfirmedList(row[uniquecodecol.Col].(string)) {
+			continue
+		}
+
+		itemcode := row[itemcodecol.Col].(string)
+		ordercode := tool.GetUniqueCode(row[uniquecodecol.Col].(string))
+		count := row[totalcol.Col].(int)
+
+		if itemorder, b := orders.IsItemExist(itemcode); b {
+			itemorder.AddOrderForm(ordercode, count, i)
+		} else {
+			orders = append(orders, dividewarehouse.NewItemOrder(itemcode, ordercode, count, i))
+		}
+
+	}
+
+	return rows, dds, sws.Divide(orders, dds, sf)
+}
+
+//確認是否為待確認名單
+func (d *DetailQC) isConfirmedList(code string) bool {
+	for _, confirmedcode := range d.ConfirmedList {
+		if confirmedcode == code {
+			return true
+		}
+	}
+	return false
+}
+
+//獲取Detail
+func (d *DetailQC) getDetail(rowslen int) ([]*dividewarehouse.DeliveryDetail, error) {
+	var dds []*dividewarehouse.DeliveryDetail = make([]*dividewarehouse.DeliveryDetail, rowslen)
 	for i := range dds {
-		dd := &iris.DeliveryDetail{}
+		dd := &dividewarehouse.DeliveryDetail{}
 		dds[i] = dd
 	}
 
-	return rows, dds, sws.Sub(rows, dds, sf)
+	return dds, nil
 }
 
 //併箱

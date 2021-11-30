@@ -68,7 +68,7 @@ func spilt_and_export_parms(se model.SpiltAndExportParms) error {
 	sp := model.SlicerParms{}
 	sp.Identify = "momo第三方指示"
 	sp.SizeSpan = "箱サイズ合計"
-	sp.Size = 180
+	sp.Size = 160
 	sp.ContainsSpan = "運送便名称"
 	sp.Contains = []string{"台湾日通(MOMO指定)"}
 
@@ -161,6 +161,8 @@ func shipping_list_parms(sl model.ShippingListParms) error {
 }
 
 func import_docments_parms(ids *model.ImportDocumentsParms) error {
+	//待確認頁籤
+	ids.ToBeConfirmedSheet = "Sheet2"
 	//csv的Sourc
 	csv := ids.CsvSourc
 	{
@@ -197,7 +199,7 @@ func zhaipei_qc_parms(ids *model.ImportDocumentsParms) error {
 	//輸出文件格式
 	ids.ZhaipeiMergeBox.MasterFileBase = "%s-宅配通QC.xlsx"
 	//第三方排序
-	ids.ZhaipeiMergeBox.ThirdPartySort = map[string]excelgo.Order{"受注番号": excelgo.ReverseOrder}
+	ids.ZhaipeiMergeBox.ThirdPartySort = map[string]excelgo.Order{"受注番号": excelgo.PositiveOrder}
 	//第三方檔名格式
 	ids.ZhaipeiMergeBox.ThirdPartyMasterFileBase = "%s-第三方宅配QC.xlsx"
 	//尺寸對照表
