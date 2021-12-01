@@ -68,6 +68,8 @@ func (sl *ShippList) ExportShippList(c *augo.Context) {
 		return
 	}
 
+	c.Set("order_num", fmt.Sprintf("%s = %d --> %d", date, oldnum, num))
+
 	var tcol []string
 	for _, col := range csv.Cols {
 		i := ""
@@ -95,8 +97,6 @@ func (sl *ShippList) ExportShippList(c *augo.Context) {
 		}
 
 	}
-
-	c.Set("order_num", fmt.Sprintf("%s = %d --> %d", date, oldnum, num))
 	return
 }
 
@@ -155,6 +155,7 @@ func (sl *ShippList) shipplist(csv, s *excelgo.Sourc, date string, ordernum int)
 				detail.AddArea(area, row)
 			}
 		} else {
+			ordernum++
 			shipp := shipplist.NewShippingDetail(
 				recipient,
 				area,
@@ -171,7 +172,6 @@ func (sl *ShippList) shipplist(csv, s *excelgo.Sourc, date string, ordernum int)
 			}
 			shipp.Tel = r[csv_telcol]
 			shippfile = append(shippfile, shipp)
-			ordernum++
 		}
 	}
 
