@@ -34,6 +34,7 @@ type ShippingListParms struct {
 	CsvSourc          `json:"csv_sourc"`
 	CommoditySourc    `json:"commodity_sourc"`
 	ShippListPosition `json:"shipp_list_position"`
+	HistoryEnvPath    string `json:"history_env_path"`
 	FileFormatPath    string `json:"file_format_path"`
 	OutputFileFormat  string `json:"output_file_format"`
 }

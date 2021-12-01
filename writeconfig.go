@@ -88,6 +88,7 @@ func spilt_and_export_parms(se model.SpiltAndExportParms) error {
 }
 
 func shipping_list_parms(sl model.ShippingListParms) error {
+
 	boxtotal := excelgo.NewCol("入数")
 	boxtotal.Numice = excelgo.Numice{IsNumice: true}
 	boxtotal.TCol = []*excelgo.TargetCol{excelgo.NewTCol(model.SHIPP_LIST_MOTHOD, "", "H")}
@@ -151,6 +152,7 @@ func shipping_list_parms(sl model.ShippingListParms) error {
 		},
 		FileFormatPath:   `/Users/gaku/IRIS系統測試檔案/出倉單/個例/出倉單.xlsx`,
 		OutputFileFormat: `%s-iris出倉單_%s.xlsx`,
+		HistoryEnvPath:   "/Users/gaku/Documents/GitHub/iris_auto/config/shipplist_history.env",
 	}
 
 	data, err := json.Marshal(&sl)

@@ -1,9 +1,16 @@
 package process
 
 import (
+	"bufio"
+	"bytes"
 	"errors"
 	"fmt"
+	"io"
+	"io/ioutil"
+	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/Gaku0607/augo"
@@ -12,6 +19,7 @@ import (
 	"github.com/Gaku0607/iris_auto/model"
 	"github.com/Gaku0607/iris_auto/shipplist"
 	"github.com/Gaku0607/iris_auto/store"
+	"github.com/Gaku0607/iris_auto/tool"
 	"github.com/xuri/excelize/v2"
 )
 
@@ -43,14 +51,19 @@ func (sl *ShippList) ExportShippList(c *augo.Context) {
 	d, _ := time.ParseInLocation("20060102", t, loc)
 	date := d.Format("20060102")
 
-	num, err := sl.getOrderNumByDate(date)
+	oldnum, err := sl.getOrderNumByDate(date)
 	if err != nil {
 		c.AbortWithError(err)
 		return
 	}
 
-	shipp, _, err := sl.shipplist(csv, s, date, num)
+	shipp, num, err := sl.shipplist(csv, s, date, oldnum)
 	if err != nil {
+		c.AbortWithError(err)
+		return
+	}
+
+	if err := sl.saveOrderNumByDate(date, num); err != nil {
 		c.AbortWithError(err)
 		return
 	}
@@ -82,6 +95,8 @@ func (sl *ShippList) ExportShippList(c *augo.Context) {
 		}
 
 	}
+
+	c.Set("order_num", fmt.Sprintf("%s = %d --> %d", date, oldnum, num))
 	return
 }
 
@@ -163,6 +178,119 @@ func (sl *ShippList) shipplist(csv, s *excelgo.Sourc, date string, ordernum int)
 	return shippfile, ordernum, shippfile.Merge()
 }
 
-func (sl *ShippList) getOrderNumByDate(date string) (int, error) {
+func (sl *ShippList) getOrderNumByDate(targetdate string) (int, error) {
+
+	if targetdate == "00010101" {
+		return 0, nil
+	}
+
+	file, err := os.Open(sl.sl.HistoryEnvPath)
+	defer file.Close()
+	if err != nil {
+		return 0, err
+	}
+
+	bufReader := bufio.NewReader(file)
+
+	for line, _, err := bufReader.ReadLine(); err != io.EOF; line, _, err = bufReader.ReadLine() {
+
+		if len(line) == 0 {
+			continue
+		}
+
+		if tool.IsAnnotaion(string(line)) {
+			continue
+		}
+
+		linestr := strings.SplitN(string(line), "=", 2)
+		if len(linestr) != 2 {
+			continue
+		}
+
+		date := linestr[0]
+		count := linestr[1]
+		if date == targetdate {
+			return strconv.Atoi(count)
+		}
+
+	}
+
 	return 0, nil
+}
+
+func (sl *ShippList) saveOrderNumByDate(targetdate string, count int) error {
+
+	if targetdate == "00010101" {
+		return nil
+	}
+
+	file, err := os.OpenFile(sl.sl.HistoryEnvPath, os.O_RDWR, 0777)
+	defer file.Close()
+	if err != nil {
+		return err
+	}
+
+	olddata, err := ioutil.ReadAll(file)
+	if err != nil {
+		return err
+	}
+
+	data := []byte(targetdate + "=" + strconv.Itoa(count) + augo.GetNewLine())
+
+	if len(olddata) == 0 {
+		_, err := file.Write(data)
+		return err
+	}
+
+	rows := bytes.Split(olddata, []byte(augo.GetNewLine()))
+	idx := 0
+	rowsidx := 0
+	linelen := len([]byte(augo.GetNewLine()))
+
+	for i, row := range rows {
+
+		rowsidx = i + 1
+		idx += len(row) + linelen
+
+		if tool.IsAnnotaion(string(row)) {
+			continue
+		}
+
+		linestr := bytes.SplitN(row, []byte("="), 2)
+		if len(linestr) != 2 {
+			continue
+		}
+
+		if string(linestr[0]) == targetdate {
+
+			idx = idx - (len(row) + linelen)
+			rowsidx--
+
+			if len(linestr[1]) != len([]byte(strconv.Itoa(count))) {
+				//......
+				for _, row := range rows[i+1:] {
+					data = append(data, row...)
+					data = append(data, []byte(augo.GetNewLine())...)
+				}
+			}
+			break
+		}
+
+	}
+
+	//當迴圈全跑完時會多一個換行服 需要刪除
+	if rowsidx == len(rows) {
+		idx--
+	}
+
+	//確認前一個byte是否為換行符
+	if string(olddata[idx-1]) != augo.GetNewLine() {
+		data = append([]byte(augo.GetNewLine()), data...)
+	}
+
+	if _, err = file.WriteAt(data, int64(idx)); err != nil {
+		return err
+	}
+
+	return nil
 }

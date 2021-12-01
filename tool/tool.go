@@ -31,7 +31,6 @@ func IsCsvFormat(filename string) bool {
 }
 
 func IsExist(path string) bool {
-
 	if _, err := os.Stat(path); err != nil {
 		if os.IsExist(err) {
 			return true
@@ -49,4 +48,11 @@ func GetUniqueCode(origincode string) string {
 	} else {
 		return origincode
 	}
+}
+
+func IsAnnotaion(str string) bool {
+	if str == "" {
+		return false
+	}
+	return uint8(str[0]) == []uint8(`#`)[0]
 }

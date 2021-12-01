@@ -1,14 +1,18 @@
 package iris
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strconv"
+	"time"
 
+	"github.com/Gaku0607/augo"
 	"github.com/Gaku0607/iris_auto/model"
+	"github.com/Gaku0607/iris_auto/tool"
 	"github.com/joho/godotenv"
 	"github.com/xuri/excelize/v2"
 )
@@ -27,6 +31,7 @@ func InitEnvironment() error {
 		return err
 	}
 
+	//刪除間格時間
 	Intval := os.Getenv("delete_intval")
 	if Intval == "" {
 		return errors.New("DeleteIntval is not exist")
@@ -38,6 +43,11 @@ func InitEnvironment() error {
 	}
 
 	if err := loadEnv(); err != nil {
+		return err
+	}
+
+	//清除出倉單舊歷程
+	if err := clearShippListHistory(); err != nil {
 		return err
 	}
 
@@ -144,6 +154,87 @@ func loadDeliverAria() error {
 			Place:      row[PlaceCol],
 		}
 		model.DeliveryArea[row[PostalCodeCol]] = delivery
+	}
+
+	return nil
+}
+
+//當出倉單的歷程時間比當日還舊時進行清除
+func clearShippListHistory() error {
+
+	annotation := []byte(`##格式為 ex:19960607=14 , "="左側為日期 "="右側為單號`)
+
+	date_env, err := os.OpenFile(model.Environment.SL.HistoryEnvPath, os.O_RDWR|os.O_CREATE, 0777)
+	if err != nil {
+		return err
+	}
+
+	olddata, err := ioutil.ReadAll(date_env)
+	if err != nil {
+		return err
+	}
+
+	//每條歷程
+	rows := bytes.Split(olddata, []byte(augo.GetNewLine()))
+
+	//當日時間
+	todaystr := time.Now().Format("20060102")
+	today, _ := strconv.Atoi(todaystr)
+
+	var (
+		newrows      [][]byte //用於儲存新的歷程
+		historycount int      //儲存所有歷程數量
+	)
+
+	for _, row := range rows {
+
+		//空行
+		if len(row) == 0 {
+			continue
+		}
+		//註解
+		if tool.IsAnnotaion(string(row)) {
+			continue
+		}
+
+		historycount++
+
+		linebyte := bytes.SplitN(row, []byte("="), 2)
+		if len(linebyte) != 2 {
+			continue
+		}
+
+		datestr := string(linebyte[0])
+		date, _ := strconv.Atoi(datestr)
+		if today > date {
+			continue
+		}
+
+		newrows = append(newrows, row)
+	}
+
+	if len(newrows) == historycount {
+		return nil
+	}
+
+	if err := date_env.Truncate(0); err != nil {
+		return err
+	}
+
+	date_env.Seek(0, 0)
+
+	newdata := bytes.Join(newrows, []byte(augo.GetNewLine()))
+	temp := newdata
+	linelen := len([]byte(augo.GetNewLine()))
+	newdata = make([]byte, len(newdata)+len(annotation)+(linelen*2))
+
+	copy(newdata, annotation)
+	copy(newdata[len(annotation):], augo.GetNewLine())
+	copy(newdata[len(annotation)+linelen:], temp)
+	copy(newdata[len(annotation)+len(temp)+linelen:], augo.GetNewLine())
+
+	if _, err := date_env.Write(newdata); err != nil {
+		return err
 	}
 
 	return nil
