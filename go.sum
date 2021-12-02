@@ -1,6 +1,8 @@
 github.com/Gaku0607/augo v0.0.0-20211130035917-1851ad22f1d8/go.mod h1:Ac1Mo74FO74Sy1G6pl+iZ2uRHCJjWpWEDEYTY+kD/WM=
 github.com/Gaku0607/augo v0.0.0-20211201053426-425fde6841ea h1:JL/VUuL9ifLa/8cRPzGczDJ8aXrjNT3Dk+dID6P3Fw8=
 github.com/Gaku0607/augo v0.0.0-20211201053426-425fde6841ea/go.mod h1:Ac1Mo74FO74Sy1G6pl+iZ2uRHCJjWpWEDEYTY+kD/WM=
+github.com/Gaku0607/augo v0.0.0-20211202021909-55000fd83989 h1:nox61bXcNywkSfPln0PRVGCgpMRAwGMQVFQNdBUANbE=
+github.com/Gaku0607/augo v0.0.0-20211202021909-55000fd83989/go.mod h1:Ac1Mo74FO74Sy1G6pl+iZ2uRHCJjWpWEDEYTY+kD/WM=
 github.com/Gaku0607/excelgo v0.0.0-20211110095051-63b5129d8378 h1:3z9/3s0FgKduQn3/O1p+L/HR5nw/ecV8X02gDox/KfM=
 github.com/Gaku0607/excelgo v0.0.0-20211110095051-63b5129d8378/go.mod h1:GJtF8dAlitKtLKdXVhcyaiFWFtAml8n+TEIj9dDBVi4=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

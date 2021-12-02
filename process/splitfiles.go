@@ -32,6 +32,10 @@ func (sf *SplitFiles) SplitAndExport(c *augo.Context) {
 
 	exportfn := func(goods [][]string, path, format string) {
 
+		if len(goods) == 0 {
+			return
+		}
+
 		base := strings.Replace(strings.Split(filepath.Base(path), ".")[0], "【IRIS OHYAMA】", "", 1)
 		path = filepath.Join(model.Result_Path, fmt.Sprintf(format, base))
 		path = excelgo.CheckFileName(path)
