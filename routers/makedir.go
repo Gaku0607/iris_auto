@@ -30,6 +30,11 @@ func MakeServiceRouters() error {
 		return err
 	}
 
+	//tripartite-form
+	if err := MakeServiceRouter(model.TRIPARTITE_FORM_MOTHOD); err != nil {
+		return err
+	}
+
 	if err := MakeServiceRouter(model.THIRD_PARTY_QC_MOTHOD); err != nil {
 		return err
 	}

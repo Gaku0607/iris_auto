@@ -61,6 +61,6 @@ func main() {
 	engine.Wait()
 
 	if err := engine.Close(); err != nil {
-		panic(err.Error())
+		iris.ErrChan <- err
 	}
 }

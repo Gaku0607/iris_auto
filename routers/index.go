@@ -18,6 +18,9 @@ func Routers(c *augo.Collector) {
 
 		//shipp-list
 		Normal_Group.Handler(model.SHIPP_LIST_MOTHOD, false, process.NewShippList().ExportShippList)
+
+		//tripartite-form
+		Normal_Group.Handler(model.TRIPARTITE_FORM_MOTHOD, false, process.NewTripartiteForm().TripartiteForm)
 	}
 
 	//QC
