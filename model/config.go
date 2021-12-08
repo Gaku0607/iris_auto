@@ -28,6 +28,7 @@ type SystemParms struct {
 	SE  SpiltAndExportParms  `json:"spilt_and_export_parms"` //分割匯出 所需要的參數
 	SL  ShippingListParms    `json:"shipping_list_parms"`    //出倉單所需要的參數
 	IDS ImportDocumentsParms `json:"import_documents_parms"` //匯入當月分文件時所需要的參數
+	TF  TripartiteFormParms  `json:"tripartite_form_parms"`  //反品的三方表單
 }
 
 type ShippingListParms struct {
@@ -100,8 +101,8 @@ type ImportDocumentsParms struct {
 
 	//宅配通所使用併箱格式
 	ZhaipeiMergeBox struct {
-		ThirdPartySort           map[string]excelgo.Order `json:"third_party_sort"` //第三方排序
-		ThirdPartyMasterFileBase string                   `json:"third_party_master_file_base"`
+		ThirdPartySort           []excelgo.SpanSort `json:"third_party_sort"` //第三方排序
+		ThirdPartyMasterFileBase string             `json:"third_party_master_file_base"`
 
 		excelgo.Sourc     `json:"sourc"`
 		NewHeaders        []string          `json:"new_headers"` //宅單所需要的Headers
@@ -130,4 +131,8 @@ type ImportDocumentsParms struct {
 		IsSelfCollectionTCol     string         `json:"is_self_collection_tcol"`
 		MasterFileBase           string         `json:"master_file_base"` //總檔的檔名格式
 	} `json:"wanda_merge_box,omitempty"`
+}
+
+type TripartiteFormParms struct {
+	OutputFileFormat string `json:"output_file_format"`
 }

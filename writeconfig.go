@@ -34,6 +34,11 @@ func WriteDefaultConfig() error {
 		return err
 	}
 
+	//三方表單
+	if err := tripartite_form_parms(s.TF); err != nil {
+		return err
+	}
+
 	//QC_Detail
 	if err := import_docments_parms(&s.IDS); err != nil {
 		return err
@@ -52,6 +57,14 @@ func WriteDefaultConfig() error {
 	return nil
 }
 
+func writeConfig(data interface{}, base string) error {
+	b, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+	return ioutil.WriteFile(filepath.Join(model.EnvironmentDir, base), b, 0777)
+}
+
 func spilt_and_export_parms(se model.SpiltAndExportParms) error {
 	sumcol := excelgo.NewCol("合計数")
 	sumcol.Numice = excelgo.Numice{IsNumice: true, IsSum: true}
@@ -63,7 +76,7 @@ func spilt_and_export_parms(se model.SpiltAndExportParms) error {
 		sumcol,
 		excelgo.NewCol("運送便名称"),
 	)
-	momo.SortOrder = map[string]excelgo.Order{"注文番号": excelgo.PositiveOrder, "納品先名称": excelgo.PositiveOrder}
+	momo.SpanSorts = []excelgo.SpanSort{{Span: "注文番号", Order: excelgo.PositiveOrder}, {Span: "納品先名称", Order: excelgo.PositiveOrder}}
 
 	sp := model.SlicerParms{}
 	sp.Identify = "momo第三方指示"
@@ -78,13 +91,7 @@ func spilt_and_export_parms(se model.SpiltAndExportParms) error {
 		BigsPathBase:   "%s-專車.xlsx",
 		NormalPathBase: "%s-宅配.xlsx",
 	}
-
-	data, err := json.Marshal(&se)
-	if err != nil {
-		return err
-	}
-
-	return ioutil.WriteFile(filepath.Join(model.EnvironmentDir, model.SPILT_AND_EXPORT_BASE), data, 0777)
+	return writeConfig(&se, model.SPILT_AND_EXPORT_BASE)
 }
 
 func shipping_list_parms(sl model.ShippingListParms) error {
@@ -154,12 +161,7 @@ func shipping_list_parms(sl model.ShippingListParms) error {
 		OutputFileFormat: `%s-iris出倉單_%s.xlsx`,
 		HistoryEnvPath:   "/Users/gaku/Documents/GitHub/iris_auto/config/shipplist_history.env",
 	}
-
-	data, err := json.Marshal(&sl)
-	if err != nil {
-		return err
-	}
-	return ioutil.WriteFile(filepath.Join(model.EnvironmentDir, model.SHIPP_LIST_BASE), data, 0777)
+	return writeConfig(&sl, model.SHIPP_LIST_BASE)
 }
 
 func import_docments_parms(ids *model.ImportDocumentsParms) error {
@@ -187,12 +189,8 @@ func import_docments_parms(ids *model.ImportDocumentsParms) error {
 	ids.ItemCodeSpan = "商品コード"
 	ids.QuantitySpan = "入数"
 	ids.UniqueCodeSpan = "注文番号"
-	data, err := json.Marshal(&ids)
-	if err != nil {
-		return err
-	}
 
-	return ioutil.WriteFile(filepath.Join(model.EnvironmentDir, model.QC_CSV_BASE), data, 0777)
+	return writeConfig(&ids, model.QC_CSV_BASE)
 }
 
 func zhaipei_qc_parms(ids *model.ImportDocumentsParms) error {
@@ -201,7 +199,7 @@ func zhaipei_qc_parms(ids *model.ImportDocumentsParms) error {
 	//輸出文件格式
 	ids.ZhaipeiMergeBox.MasterFileBase = "%s-宅配通QC.xlsx"
 	//第三方排序
-	ids.ZhaipeiMergeBox.ThirdPartySort = map[string]excelgo.Order{"受注番号": excelgo.PositiveOrder}
+	ids.ZhaipeiMergeBox.ThirdPartySort = []excelgo.SpanSort{{Span: "受注番号", Order: excelgo.PositiveOrder}}
 	//第三方檔名格式
 	ids.ZhaipeiMergeBox.ThirdPartyMasterFileBase = "%s-第三方宅配QC.xlsx"
 	//尺寸對照表
@@ -292,18 +290,12 @@ func zhaipei_qc_parms(ids *model.ImportDocumentsParms) error {
 			boxsizecol,
 			jancodecol,
 		)
-
-		zhaipeisourc.SortOrder = map[string]excelgo.Order{"訂單編號-1": excelgo.PositiveOrder}
+		zhaipeisourc.SpanSorts = []excelgo.SpanSort{{Span: "訂單編號-1", Order: excelgo.PositiveOrder}}
 		zhaipeisourc.Formulas = excelgo.Formulas{excelgo.NewFormula(model.ZHAIPEI_QC_MOTHOD, fmt.Sprintf("=%s!C", model.ZHAIPEI_QC_SHEET)+"%d", model.ZHAIPEI_RETURNS_SHEET, "A")}
 		ids.ZhaipeiMergeBox.Sourc = *zhaipeisourc
 	}
 
-	data, err := json.Marshal(&ids.ZhaipeiMergeBox)
-	if err != nil {
-		return err
-	}
-
-	return ioutil.WriteFile(filepath.Join(model.EnvironmentDir, model.ZHAIPEI_QC_BASE), data, 0777)
+	return writeConfig(&ids.ZhaipeiMergeBox, model.ZHAIPEI_QC_BASE)
 }
 
 func wenda_qc_parms(ids *model.ImportDocumentsParms) error {
@@ -391,18 +383,21 @@ func wenda_qc_parms(ids *model.ImportDocumentsParms) error {
 			jancodecol,
 		)
 
-		wendasourc.SortOrder = map[string]excelgo.Order{"JAN コード": excelgo.PositiveOrder, "區域": excelgo.PositiveOrder, "注文番号": excelgo.PositiveOrder}
+		wendasourc.SpanSorts = []excelgo.SpanSort{
+			{Span: "JAN コード", Order: excelgo.ReverseOrder},
+			{Span: "區域", Order: excelgo.ReverseOrder},
+			{Span: "注文番号", Order: excelgo.ReverseOrder},
+		}
 		wendasourc.Formulas = excelgo.Formulas{
 			excelgo.NewFormula(model.WENDA_QC_MOTHOD, fmt.Sprintf("=%s!D", model.WENDA_QC_SHEET)+"%d", model.WENDA_DRIVER_SHEET, "E"),
 			excelgo.NewFormula(model.WENDA_QC_MOTHOD, fmt.Sprintf("=%s!D", model.WENDA_QC_SHEET)+"%d", model.WENDA_RETURNS_SHEET, "O"),
 		}
 		ids.WendaMergeBox.Sourc = *wendasourc
 	}
+	return writeConfig(&ids.WendaMergeBox, model.WENDA_QC_BASE)
+}
 
-	data, err := json.Marshal(&ids.WendaMergeBox)
-	if err != nil {
-		return err
-	}
-
-	return ioutil.WriteFile(filepath.Join(model.EnvironmentDir, model.WENDA_QC_BASE), data, 0777)
+func tripartite_form_parms(tf model.TripartiteFormParms) error {
+	tf.OutputFileFormat = "test"
+	return writeConfig(&tf, model.TRIPARTITE_FORM_BASE)
 }

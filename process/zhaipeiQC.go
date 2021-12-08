@@ -44,7 +44,7 @@ func (z *ZhaipeiQC) ThirdPartyQC(c *augo.Context) {
 	s := sourc.(*excelgo.Sourc)
 	z.ConfirmedList = confirmedlist.([]string)
 
-	s.SortOrder = z.IDS.ZhaipeiMergeBox.ThirdPartySort
+	s.SpanSorts = z.IDS.ZhaipeiMergeBox.ThirdPartySort
 
 	if err := z.exportQC(s, csvsourc.(*excelgo.Sourc), z.IDS.ZhaipeiMergeBox.ThirdPartyMasterFileBase); err != nil {
 		c.AbortWithError(err)
