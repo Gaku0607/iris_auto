@@ -111,12 +111,15 @@ func loadEnv() error {
 	if data, err = load(model.SPILT_AND_EXPORT_BASE); err != nil {
 		return err
 	}
+	if err = json.Unmarshal(data, &model.Environment.SE); err != nil {
+		return err
+	}
 
 	//三方表單
 	if data, err = load(model.TRIPARTITE_FORM_BASE); err != nil {
 		return err
 	}
-	return json.Unmarshal(data, &model.Environment.SE)
+	return json.Unmarshal(data, &model.Environment.TF)
 }
 
 func load(path string) ([]byte, error) {

@@ -46,7 +46,6 @@ func VerificationPath(c *augo.Context) {
 		c.Set(model.CSV_KEY, ss[1])
 
 	case model.TRIPARTITE_FORM_MOTHOD:
-		fmt.Println("ＭＡＫＩＮＧ....")
 
 	case model.WENDA_QC_MOTHOD, model.ZHAIPEI_QC_MOTHOD, model.THIRD_PARTY_QC_MOTHOD:
 		xlsxpath, csvpath, err := checkFileCount(c.Request, 1, -1)
