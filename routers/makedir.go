@@ -31,7 +31,7 @@ func MakeServiceRouters() error {
 	}
 
 	//tripartite-form
-	if err := MakeServiceRouter(model.TRIPARTITE_FORM_MOTHOD); err != nil {
+	if err := MakeServiceRouter(model.TRIPARTITE_SPILT_MOTHOD); err != nil {
 		return err
 	}
 

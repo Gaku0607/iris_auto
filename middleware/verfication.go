@@ -14,7 +14,7 @@ import (
 func VerificationPath(c *augo.Context) {
 
 	switch c.Request.Method() {
-	case model.SPILT_AND_EXPORT_MOTHOD:
+	case model.SPILT_AND_EXPORT_MOTHOD, model.TRIPARTITE_SPILT_MOTHOD:
 		_, _, err := checkFileCount(c.Request, 0, -1)
 		if err != nil {
 			c.AbortWithError(err)
@@ -44,8 +44,6 @@ func VerificationPath(c *augo.Context) {
 
 		c.Set(model.SOURCE_KEY, ss[0])
 		c.Set(model.CSV_KEY, ss[1])
-
-	case model.TRIPARTITE_FORM_MOTHOD:
 
 	case model.WENDA_QC_MOTHOD, model.ZHAIPEI_QC_MOTHOD, model.THIRD_PARTY_QC_MOTHOD:
 		xlsxpath, csvpath, err := checkFileCount(c.Request, 1, -1)

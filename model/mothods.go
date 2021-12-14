@@ -7,7 +7,7 @@ const (
 	WENDA_QC_MOTHOD         = "穩達ＱＣ"
 	ZHAIPEI_QC_MOTHOD       = "宅配通ＱＣ"
 	THIRD_PARTY_QC_MOTHOD   = "第三方ＱＣ"
-	TRIPARTITE_FORM_MOTHOD  = "三方表單"
+	TRIPARTITE_SPILT_MOTHOD = "三方專車宅配"
 )
 
 //配置檔案名

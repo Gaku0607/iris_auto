@@ -9,36 +9,45 @@ import (
 
 func Routers(c *augo.Collector) {
 
+	var SplitService *process.SplitFiles = process.NewSplitFiles()
+	var ShippService *process.ShippList = process.NewShippList()
+
+	var QCDetail = process.NewDetailQC()
+	var WendaQCService *process.WendaQC = process.NewWendaQC(QCDetail)
+	var ZhaipeiQCService *process.ZhaipeiQC = process.NewZhaipeiQC(QCDetail)
+
 	c.Use(augo.Recovery(c.Logger))
 
 	Normal_Group := c.Group(absoluteServicePath(augo.GetPathChar()), augo.DeletFiles(), middleware.VerificationPath)
 	{
 		//spilt-and-export
-		Normal_Group.Handler(model.SPILT_AND_EXPORT_MOTHOD, false, process.NewSplitFiles().SplitAndExport)
+		Normal_Group.Handler(model.SPILT_AND_EXPORT_MOTHOD, false, SplitService.SplitAndExport(process.OriginSpliteFiles))
 
 		//shipp-list
-		Normal_Group.Handler(model.SHIPP_LIST_MOTHOD, false, process.NewShippList().ExportShippList)
+		Normal_Group.Handler(model.SHIPP_LIST_MOTHOD, false, ShippService.ExportShippList)
 
-		//tripartite-form
-		Normal_Group.Handler(model.TRIPARTITE_FORM_MOTHOD, false, process.NewTripartiteForm().TripartiteForm)
+		//tripartite-group
+		Tripartite_Group := Normal_Group.Group("三方表單")
+		{
+			//tripartite-spilt-and-export
+			Tripartite_Group.HandlerWithVisit(model.TRIPARTITE_SPILT_MOTHOD, SplitService.SplitAndExport(process.TripartiteSplitFiles))
+		}
 	}
 
 	//QC
 	QC_Group := c.Group(absoluteServicePath(augo.GetPathChar()), middleware.VerificationPath, middleware.InitFiles)
 	{
-		qc_detail := process.NewDetailQC()
 
 		//wenda-qc-table
-		QC_Group.HandlerWithVisit(model.WENDA_QC_MOTHOD, process.NewWendaQC(qc_detail).WendaMergeBoxAndExportList)
+		QC_Group.HandlerWithVisit(model.WENDA_QC_MOTHOD, WendaQCService.WendaMergeBoxAndExportList)
 
 		//zhaipei-qc-table
-		zhaipei := process.NewZhaipeiQC(qc_detail)
 		{
 			//origin-qc
-			QC_Group.HandlerWithVisit(model.ZHAIPEI_QC_MOTHOD, zhaipei.OrginZhaipeiQC)
+			QC_Group.HandlerWithVisit(model.ZHAIPEI_QC_MOTHOD, ZhaipeiQCService.OrginZhaipeiQC)
 
 			//third-party-qc
-			QC_Group.HandlerWithVisit(model.THIRD_PARTY_QC_MOTHOD, zhaipei.ThirdPartyQC)
+			QC_Group.HandlerWithVisit(model.THIRD_PARTY_QC_MOTHOD, ZhaipeiQCService.ThirdPartyQC)
 		}
 
 	}
