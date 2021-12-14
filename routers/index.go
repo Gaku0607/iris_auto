@@ -18,7 +18,7 @@ func Routers(c *augo.Collector) {
 
 	c.Use(augo.Recovery(c.Logger))
 
-	Normal_Group := c.Group(absoluteServicePath(augo.GetPathChar()), augo.DeletFiles(), middleware.VerificationPath)
+	Normal_Group := c.Group(model.Services_Dir, augo.DeletFiles(), middleware.VerificationPath)
 	{
 		//spilt-and-export
 		Normal_Group.Handler(model.SPILT_AND_EXPORT_MOTHOD, false, SplitService.SplitAndExport(process.OriginSpliteFiles))
@@ -26,28 +26,29 @@ func Routers(c *augo.Collector) {
 		//shipp-list
 		Normal_Group.Handler(model.SHIPP_LIST_MOTHOD, false, ShippService.ExportShippList)
 
+	}
+
+	Visit_Group := c.Group(model.Services_Dir, middleware.VerificationPath)
+	{
 		//tripartite-group
-		Tripartite_Group := Normal_Group.Group("三方反品")
+		Tripartite_Group := Visit_Group.Group("三方反品")
 		{
 			//tripartite-spilt-and-export
 			Tripartite_Group.HandlerWithVisit(model.TRIPARTITE_SPILT_MOTHOD, SplitService.SplitAndExport(process.TripartiteSplitFiles))
 		}
-	}
 
-	//QC
-	QC_Group := c.Group(absoluteServicePath(augo.GetPathChar()), middleware.VerificationPath, middleware.InitFiles)
-	{
-
-		//wenda-qc-table
-		QC_Group.HandlerWithVisit(model.WENDA_QC_MOTHOD, WendaQCService.WendaMergeBoxAndExportList)
-
-		//zhaipei-qc-table
+		QC_Group := Visit_Group.Group(augo.GetPathChar(), middleware.InitFiles)
 		{
-			//origin-qc
+
+			//wenda-qc-table
+			QC_Group.HandlerWithVisit(model.WENDA_QC_MOTHOD, WendaQCService.WendaMergeBoxAndExportList)
+
+			//zhaipei-origin-qc
 			QC_Group.HandlerWithVisit(model.ZHAIPEI_QC_MOTHOD, ZhaipeiQCService.OrginZhaipeiQC)
 
-			//third-party-qc
+			//zhaipei-third-party-qc
 			QC_Group.HandlerWithVisit(model.THIRD_PARTY_QC_MOTHOD, ZhaipeiQCService.ThirdPartyQC)
+
 		}
 
 	}

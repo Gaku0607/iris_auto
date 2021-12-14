@@ -21,6 +21,9 @@ func main() {
 		iris.ErrChan <- err
 	}
 
+	if err := routers.MakeServiceRouters(); err != nil {
+		iris.ErrChan <- err
+	}
 	//初始化匯出格式
 	formatter.InitExportValue()
 
