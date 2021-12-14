@@ -27,7 +27,7 @@ func Routers(c *augo.Collector) {
 		Normal_Group.Handler(model.SHIPP_LIST_MOTHOD, false, ShippService.ExportShippList)
 
 		//tripartite-group
-		Tripartite_Group := Normal_Group.Group("三方表單")
+		Tripartite_Group := Normal_Group.Group("三方反品")
 		{
 			//tripartite-spilt-and-export
 			Tripartite_Group.HandlerWithVisit(model.TRIPARTITE_SPILT_MOTHOD, SplitService.SplitAndExport(process.TripartiteSplitFiles))

@@ -21,12 +21,7 @@ func VerificationPath(c *augo.Context) {
 			return
 		}
 
-		s, err := getSourc("", c.Request.Method())
-		if err != nil {
-			c.AbortWithError(err)
-			return
-		}
-
+		s, _ := getSourc("", c.Request.Method())
 		c.Set(model.SOURCE_KEY, s)
 
 	case model.SHIPP_LIST_MOTHOD:
@@ -186,7 +181,7 @@ func getSources(paths []string, method string) ([]*excelgo.Sourc, error) {
 
 func getSourc(path, method string) (*excelgo.Sourc, error) {
 	switch method {
-	case model.SPILT_AND_EXPORT_MOTHOD:
+	case model.SPILT_AND_EXPORT_MOTHOD, model.TRIPARTITE_SPILT_MOTHOD:
 		s := model.Environment.SE.Sourc
 		return &s, nil
 	}

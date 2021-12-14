@@ -15,83 +15,6 @@ import (
 
 type SpliteFilesFunc func(c *augo.Context, s *excelgo.Sourc)
 
-type SplitFiles struct {
-	se model.SpiltAndExportParms
-}
-
-func NewSplitFiles() *SplitFiles {
-	s := &SplitFiles{}
-	s.se = model.Environment.SE
-	return s
-}
-
-func (sf *SplitFiles) SplitAndExport(fn SpliteFilesFunc) augo.HandlerFunc {
-	return func(c *augo.Context) {
-
-		sourc, _ := c.Get(model.SOURCE_KEY)
-		s := sourc.(*excelgo.Sourc)
-
-		fn(c, s)
-
-	}
-}
-
-//切割指定內容以及匯出
-func export(s *excelgo.Sourc, goods [][]string, base string) (string, error) {
-
-	if len(goods) == 0 {
-		return "", nil
-	}
-
-	path := filepath.Join(model.Result_Path, base)
-	path = excelgo.CheckFileName(path)
-
-	data, err := s.Transform(goods)
-	if err != nil {
-		return "", err
-	}
-
-	msg, err := getSumMsg(s, data)
-	if err != nil {
-		return "", err
-	}
-
-	s.Sort(data)
-	data = s.SetHeader(data)
-	if err = store.Store.Export(path, data); err != nil {
-		return "", err
-	}
-	return msg, nil
-}
-
-//獲取合計數的信息
-func getSumMsg(s *excelgo.Sourc, data [][]interface{}) (string, error) {
-	if err := s.Sum(data); err != nil {
-		return "", err
-	}
-	return fmt.Sprintf("合計数: %d", s.GetCol("合計数").Total), nil
-}
-
-//依地址判斷返回需要的切割方式
-func getCutMethodByPath(Path string) slicer.Slicer {
-
-	var cf slicer.Slicer
-	var se model.SlicerParms = model.Environment.SE.SlicerParms
-
-	base := path.Base(Path)
-
-	if strings.Contains(base, se.Identify.(string)) {
-		cf = slicer.NewMomoCut(
-			slicer.NewContentCut(se.Contains),
-			slicer.NewSizeCut(se.Size),
-		)
-	} else {
-		cf = slicer.NewSizeCut(se.Size)
-	}
-
-	return cf
-}
-
 //三方分單
 func TripartiteSplitFiles(c *augo.Context, s *excelgo.Sourc) {
 
@@ -189,6 +112,81 @@ func OriginSpliteFiles(c *augo.Context, s *excelgo.Sourc) {
 		c.Set(normalbase, msg)
 
 	}
+}
+
+type SplitFiles struct {
+	se model.SpiltAndExportParms
+}
+
+func NewSplitFiles() *SplitFiles {
+	s := &SplitFiles{}
+	s.se = model.Environment.SE
+	return s
+}
+
+func (sf *SplitFiles) SplitAndExport(fn SpliteFilesFunc) augo.HandlerFunc {
+	return func(c *augo.Context) {
+		sourc, _ := c.Get(model.SOURCE_KEY)
+		s := sourc.(*excelgo.Sourc)
+
+		fn(c, s)
+	}
+}
+
+//切割指定內容以及匯出
+func export(s *excelgo.Sourc, goods [][]string, base string) (string, error) {
+
+	if len(goods) == 0 {
+		return "", nil
+	}
+
+	path := filepath.Join(model.Result_Path, base)
+	path = excelgo.CheckFileName(path)
+
+	data, err := s.Transform(goods)
+	if err != nil {
+		return "", err
+	}
+
+	msg, err := getSumMsg(s, data)
+	if err != nil {
+		return "", err
+	}
+
+	s.Sort(data)
+	data = s.SetHeader(data)
+	if err = store.Store.Export(path, data); err != nil {
+		return "", err
+	}
+	return msg, nil
+}
+
+//獲取合計數的信息
+func getSumMsg(s *excelgo.Sourc, data [][]interface{}) (string, error) {
+	if err := s.Sum(data); err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("合計数: %d", s.GetCol("合計数").Total), nil
+}
+
+//依地址判斷返回需要的切割方式
+func getCutMethodByPath(Path string) slicer.Slicer {
+
+	var cf slicer.Slicer
+	var se model.SlicerParms = model.Environment.SE.SlicerParms
+
+	base := path.Base(Path)
+
+	if strings.Contains(base, se.Identify.(string)) {
+		cf = slicer.NewMomoCut(
+			slicer.NewContentCut(se.Contains),
+			slicer.NewSizeCut(se.Size),
+		)
+	} else {
+		cf = slicer.NewSizeCut(se.Size)
+	}
+
+	return cf
 }
 
 func getBigGoodBase(path string) string {

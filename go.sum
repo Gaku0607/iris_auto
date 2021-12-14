@@ -1,5 +1,7 @@
 github.com/Gaku0607/augo v0.0.0-20211202021909-55000fd83989 h1:nox61bXcNywkSfPln0PRVGCgpMRAwGMQVFQNdBUANbE=
 github.com/Gaku0607/augo v0.0.0-20211202021909-55000fd83989/go.mod h1:Ac1Mo74FO74Sy1G6pl+iZ2uRHCJjWpWEDEYTY+kD/WM=
+github.com/Gaku0607/augo v0.0.0-20211214064115-01b28e372f69 h1:eibG5ZCH+tLhv0au/4Qdic3kRcCJjrp3vrQTc7WGf/E=
+github.com/Gaku0607/augo v0.0.0-20211214064115-01b28e372f69/go.mod h1:Ac1Mo74FO74Sy1G6pl+iZ2uRHCJjWpWEDEYTY+kD/WM=
 github.com/Gaku0607/excelgo v0.0.0-20211208053655-9d03f3bc10ad h1:dD2M+lf5IRbwVB3WXvPrl/ZZxba+KIcm0HjZ3BufLiY=
 github.com/Gaku0607/excelgo v0.0.0-20211208053655-9d03f3bc10ad/go.mod h1:GJtF8dAlitKtLKdXVhcyaiFWFtAml8n+TEIj9dDBVi4=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
@@ -47,6 +49,8 @@ golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c/go.mod h1:oPkhp1MJrh7nUepCBc
 golang.org/x/sys v0.0.0-20210927094055-39ccf1dd6fa6/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20211124211545-fe61309f8881 h1:TyHqChC80pFkXWraUUf6RuB5IqFdQieMLwwCJokV2pc=
 golang.org/x/sys v0.0.0-20211124211545-fe61309f8881/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+golang.org/x/sys v0.0.0-20211213223007-03aa0b5f6827 h1:A0Qkn7Z/n8zC1xd9LTw17AiKlBRK64tw3ejWQiEqca0=
+golang.org/x/sys v0.0.0-20211213223007-03aa0b5f6827/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
