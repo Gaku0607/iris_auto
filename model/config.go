@@ -103,16 +103,15 @@ type ImportDocumentsParms struct {
 	ZhaipeiMergeBox struct {
 		ThirdPartySort           []excelgo.SpanSort `json:"third_party_sort"` //第三方排序
 		ThirdPartyMasterFileBase string             `json:"third_party_master_file_base"`
-
-		excelgo.Sourc     `json:"sourc"`
-		NewHeaders        []string          `json:"new_headers"` //宅單所需要的Headers
-		NewCols           []*excelgo.Col    `json:"new_cols"`    //宅配主檔新欄位
-		ArrivalRemarkSpan string            `json:"arrival_remark_span"`
-		TimeRemark        map[string]int    `json:"time_remark"` //送貨備註
-		SizeSpan          string            `json:"size_span"`
-		Sizelist          map[string]string `json:"size_list"` //尺寸表
-		JanCodeSpan       string            `json:"jan_code_span"`
-		MasterFileBase    string            `json:"master_file_base"` //總檔的檔名格式
+		excelgo.Sourc            `json:"sourc"`
+		NewHeaders               []string          `json:"new_headers"` //宅單所需要的Headers
+		NewCols                  []*excelgo.Col    `json:"new_cols"`    //宅配主檔新欄位
+		ArrivalRemarkSpan        string            `json:"arrival_remark_span"`
+		TimeRemark               map[string]int    `json:"time_remark"` //送貨備註
+		SizeSpan                 string            `json:"size_span"`
+		Sizelist                 map[string]string `json:"size_list"` //尺寸表
+		JanCodeSpan              string            `json:"jan_code_span"`
+		MasterFileBase           string            `json:"master_file_base"` //總檔的檔名格式
 	} `json:"zhaipei_merge_box,omitempty"`
 
 	//穩達所使用的併箱格式
@@ -135,4 +134,14 @@ type ImportDocumentsParms struct {
 
 type TripartiteFormParms struct {
 	OutputFileFormat string `json:"output_file_format"`
+	TripartiteQC
+}
+
+type TripartiteQC struct {
+	TripartiteStatusList  []string `json:"tripartite_status_list"`
+	excelgo.Sourc         `json:"sourc"`
+	TripartiteInputFormat string `json:"tripartite_Input_format"`
+	DateSpan              string `json:"date_span"`
+	UniqueCodeSpan        string `json:"unique_code_span"`
+	StatusSpan            string `json:"status_span"`
 }

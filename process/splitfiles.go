@@ -55,7 +55,7 @@ func TripartiteSplitFiles(c *augo.Context, s *excelgo.Sourc) {
 		c.AbortWithError(err)
 		return
 	}
-	c.Set(bigbase, msg)
+	c.SetLogKey(bigbase, msg)
 
 	//宅配
 	msg, err = export(s, normalgoods, normalbase+".xlsx")
@@ -63,7 +63,7 @@ func TripartiteSplitFiles(c *augo.Context, s *excelgo.Sourc) {
 		c.AbortWithError(err)
 		return
 	}
-	c.Set(normalbase, msg)
+	c.SetLogKey(normalbase, msg)
 }
 
 //基本分單
@@ -100,7 +100,7 @@ func OriginSpliteFiles(c *augo.Context, s *excelgo.Sourc) {
 			c.AbortWithError(err)
 			return
 		}
-		c.Set(bigbase, msg)
+		c.SetLogKey(bigbase, msg)
 
 		//宅配
 		normalbase = getNormalGoodBase(path)
@@ -109,7 +109,7 @@ func OriginSpliteFiles(c *augo.Context, s *excelgo.Sourc) {
 			c.AbortWithError(err)
 			return
 		}
-		c.Set(normalbase, msg)
+		c.SetLogKey(normalbase, msg)
 
 	}
 }

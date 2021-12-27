@@ -399,5 +399,23 @@ func wenda_qc_parms(ids *model.ImportDocumentsParms) error {
 
 func tripartite_form_parms(tf model.TripartiteFormParms) error {
 	tf.OutputFileFormat = "test"
+
+	tf.TripartiteQC = model.TripartiteQC{}
+	{
+		tf.TripartiteStatusList = []string{model.TRIPARTITE_BACK_AND_FORTH, model.TRITARTITE_RE_SEND, model.TRIPARTITE_STATUS_NULL}
+		tf.DateSpan = "聯絡日"
+		tf.StatusSpan = "作業指示"
+		tf.UniqueCodeSpan = "訂單編號"
+		tf.TripartiteInputFormat = "三方連動"
+
+		sourc := excelgo.NewSourc(
+			"處理中",
+			excelgo.NewCol(tf.DateSpan),
+			excelgo.NewCol(tf.StatusSpan),
+			excelgo.NewCol(tf.UniqueCodeSpan),
+		)
+		sourc.SpanSorts = []excelgo.SpanSort{{Span: "訂單編號-1", Order: excelgo.PositiveOrder}}
+		tf.Sourc = *sourc
+	}
 	return writeConfig(&tf, model.TRIPARTITE_FORM_BASE)
 }

@@ -40,7 +40,7 @@ func VerificationPath(c *augo.Context) {
 		c.Set(model.SOURCE_KEY, ss[0])
 		c.Set(model.CSV_KEY, ss[1])
 
-	case model.WENDA_QC_MOTHOD, model.ZHAIPEI_QC_MOTHOD, model.THIRD_PARTY_QC_MOTHOD:
+	case model.WENDA_QC_MOTHOD, model.ZHAIPEI_QC_MOTHOD, model.THIRD_PARTY_QC_MOTHOD, model.TRIPARTITE_ZHAIPEI_QC_MOTHOD:
 		xlsxpath, csvpath, err := checkFileCount(c.Request, 1, -1)
 		if err != nil {
 			c.AbortWithError(err)
@@ -152,7 +152,7 @@ func getSources(paths []string, method string) ([]*excelgo.Sourc, error) {
 		}
 		return append(ss, &commoditysourc, &csvsourc), nil
 
-	case model.WENDA_QC_MOTHOD, model.ZHAIPEI_QC_MOTHOD, model.THIRD_PARTY_QC_MOTHOD:
+	case model.WENDA_QC_MOTHOD, model.ZHAIPEI_QC_MOTHOD, model.THIRD_PARTY_QC_MOTHOD, model.TRIPARTITE_ZHAIPEI_QC_MOTHOD:
 		var s, csv excelgo.Sourc
 		for _, p := range paths {
 			if tool.IsCsvFormat(filepath.Base(p)) {

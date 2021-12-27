@@ -35,19 +35,27 @@ func Routers(c *augo.Collector) {
 		{
 			//tripartite-spilt-and-export
 			Tripartite_Group.HandlerWithVisit(model.TRIPARTITE_SPILT_MOTHOD, SplitService.SplitAndExport(process.TripartiteSplitFiles))
+
+			//tripartite-qc-group
+			Tripartite_QC_Group := Tripartite_Group.Group(augo.GetPathChar(), middleware.InitTripartiteForm(), middleware.InitQCSourceFiles)
+			{
+				//tripartite-zhaipei-qc
+				Tripartite_QC_Group.HandlerWithVisit(model.TRIPARTITE_ZHAIPEI_QC_MOTHOD, ZhaipeiQCService.TripartiteQC)
+			}
+
 		}
 
-		QC_Group := Visit_Group.Group(augo.GetPathChar(), middleware.InitFiles)
+		QC_Group := Visit_Group.Group(augo.GetPathChar(), middleware.InitQCSourceFiles)
 		{
 
 			//wenda-qc-table
 			QC_Group.HandlerWithVisit(model.WENDA_QC_MOTHOD, WendaQCService.WendaMergeBoxAndExportList)
 
 			//zhaipei-origin-qc
-			QC_Group.HandlerWithVisit(model.ZHAIPEI_QC_MOTHOD, ZhaipeiQCService.OrginZhaipeiQC)
+			QC_Group.HandlerWithVisit(model.ZHAIPEI_QC_MOTHOD, ZhaipeiQCService.ZhaipeiQC(true))
 
 			//zhaipei-third-party-qc
-			QC_Group.HandlerWithVisit(model.THIRD_PARTY_QC_MOTHOD, ZhaipeiQCService.ThirdPartyQC)
+			QC_Group.HandlerWithVisit(model.THIRD_PARTY_QC_MOTHOD, ZhaipeiQCService.ZhaipeiQC(false))
 
 		}
 
