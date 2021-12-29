@@ -21,6 +21,7 @@ func InitTripartiteForm() augo.HandlerFunc {
 	newdate := ""
 	sourc := model.Environment.TF.TripartiteQC.Sourc
 	removeAbnormalRowfn := removeAbnormalRow(sourc.SheetName)
+	parseDatefn := parseDate()
 	return func(c *augo.Context) {
 		gs := make(map[string]string)
 		for _, file := range c.Request.Files {
@@ -63,18 +64,19 @@ func InitTripartiteForm() augo.HandlerFunc {
 			if newdate == "" {
 				newdate = rows[len(rows)-1][datecol]
 			} else {
-				t, err := parseDate(newdate)
+				t, err := parseDatefn(newdate)
 				if err != nil {
 					c.AbortWithError(err)
 					return
 				}
 
-				date, err := parseDate(rows[len(rows)-1][datecol])
+				newdate = rows[len(rows)-1][datecol]
+
+				date, err := parseDatefn(newdate)
 				if err != nil {
 					c.AbortWithError(err)
 					return
 				}
-
 				if !t.Equal(date) {
 					c.AbortWithError(errors.New("The latest date is inconsistent"))
 					return
@@ -88,7 +90,8 @@ func InitTripartiteForm() augo.HandlerFunc {
 				}
 
 				if model.IsTripartiteStatus(row[statuscol]) {
-					gs[row[uniquecodecol]] = row[statuscol]
+					code := strings.TrimSpace(row[uniquecodecol])
+					gs[code] = row[statuscol]
 				}
 			}
 		}
@@ -99,29 +102,41 @@ func InitTripartiteForm() augo.HandlerFunc {
 	}
 }
 
-func parseDate(datestr string) (time.Time, error) {
-	datestr = strings.TrimSpace(datestr)
-	format := ""
-	if b, _ := regexp.MatchString("^[0-9]{1,2}/[0-9]{1,2}$", datestr); b {
-		format = "01/02"
-	} else {
-		if b, _ = regexp.MatchString("^[0-9]{1,2}月[0-9]{1,2}日$", datestr); b {
-			format = "01月02日"
+func parseDate() func(string) (time.Time, error) {
+	regexpmap := map[string]string{
+		"01/02":  "^[0-9]{1,2}/[0-9]{1,2}$",
+		"01月02日": "^[0-9]{1,2}月[0-9]{1,2}日$",
+		"01-02":  "^[0-9]{1,2}-[0-9]{1,2}$",
+	}
+	return func(datestr string) (time.Time, error) {
+		datestr = strings.TrimSpace(datestr)
+		format := ""
+
+		//格式為 01-02-21時  不計算year
+		if strings.Count(datestr, "-") > 1 {
+			sli := strings.Split(datestr, "-")[:2]
+			datestr = strings.Join(sli, "-")
 		}
-	}
 
-	if format == "" {
-		return time.Time{}, fmt.Errorf(`Unable to parse the date: "%s"`, datestr)
-	}
+		for dateformat, matchstr := range regexpmap {
+			if b, _ := regexp.MatchString(matchstr, datestr); b {
+				format = dateformat
+				break
+			}
+		}
 
-	return time.Parse(format, datestr)
+		if format == "" {
+			return time.Time{}, fmt.Errorf(`Unable to parse the date: "%s"`, datestr)
+		}
+		return time.Parse(format, datestr)
+	}
 }
 
 //刪除Sheet底部所有空白行
 func removeBlankRow(rows [][]string, uniquecol int) [][]string {
 	index := 0
 	for i := len(rows) - 1; i > 0; i-- {
-		if rows[i][uniquecol] != "" {
+		if len(rows[i]) > uniquecol && rows[i][uniquecol] != "" {
 			index = i
 			break
 		}
@@ -142,8 +157,9 @@ func removeAbnormalRow(sheetname string) func(f excelgo.FormFile, rows [][]strin
 		if !ok {
 			return nil, errors.New("removeAbnormalRow is failed")
 		}
+
 		for i := len(rows) + blankcount; i > 0; i-- {
-			color := tool.GetCellBgColor(xlsxf.File, sheetname, "B"+strconv.Itoa(i))
+			color := tool.GetCellBgColor(xlsxf.File, sheetname, "C"+strconv.Itoa(i))
 			if color == "" || color == "FFFFFF" {
 				index = i - blankcount
 				break

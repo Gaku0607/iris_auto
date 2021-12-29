@@ -402,7 +402,7 @@ func tripartite_form_parms(tf model.TripartiteFormParms) error {
 
 	tf.TripartiteQC = model.TripartiteQC{}
 	{
-		tf.TripartiteStatusList = []string{model.TRIPARTITE_BACK_AND_FORTH, model.TRITARTITE_RE_SEND, model.TRIPARTITE_STATUS_NULL}
+		tf.TripartiteStatusList = []string{"momo第三方交換", "補寄商品", "來回件"}
 		tf.DateSpan = "聯絡日"
 		tf.StatusSpan = "作業指示"
 		tf.UniqueCodeSpan = "訂單編號"

@@ -119,7 +119,15 @@ func loadEnv() error {
 	if data, err = load(model.TRIPARTITE_FORM_BASE); err != nil {
 		return err
 	}
-	return json.Unmarshal(data, &model.Environment.TF)
+	if err = json.Unmarshal(data, &model.Environment.TF); err != nil {
+		return err
+	}
+
+	if err = initTripartiteStatusForm(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func load(path string) ([]byte, error) {
@@ -164,6 +172,16 @@ func loadDeliverAria() error {
 		model.DeliveryArea[row[PostalCodeCol]] = delivery
 	}
 
+	return nil
+}
+
+//初始化三方表單狀態
+func initTripartiteStatusForm() error {
+	model.TripartiteStatus = model.Environment.TF.TripartiteStatusList
+	if model.TripartiteStatus == nil {
+		return errors.New("Failed to initialize TripartiteStatusForm")
+	}
+	model.TripartiteStatus = append(model.TripartiteStatus, model.TRIPARTITE_STATUS_NULL)
 	return nil
 }
 

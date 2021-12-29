@@ -94,6 +94,8 @@ func (z *ZhaipeiQC) TripartiteQC(c *augo.Context) {
 		z.tripartiteStatusList[status] = append(z.tripartiteStatusList[status], row)
 	}
 
+	t := time.Now().Format("01-02")
+
 	for status, rows := range z.tripartiteStatusList {
 
 		if len(rows) == 0 {
@@ -103,7 +105,7 @@ func (z *ZhaipeiQC) TripartiteQC(c *augo.Context) {
 		//設置ＩＤ
 		setNumID(s, rows)
 
-		filename := filepath.Join(model.Result_Path, fmt.Sprintf("%s-QC.xlsx", status))
+		filename := filepath.Join(model.Result_Path, fmt.Sprintf("%s %s-QC.xlsx", t, status))
 		filename = excelgo.CheckFileName(filename)
 
 		if err := store.Store.ExportZhaipeiFiles(filename, s, rows); err != nil {
