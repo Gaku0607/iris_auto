@@ -35,7 +35,7 @@ func WriteDefaultConfig() error {
 	}
 
 	//三方表單
-	if err := tripartite_form_parms(s.TF); err != nil {
+	if err := tripartite_zhaipei_qc_parms(s.TF); err != nil {
 		return err
 	}
 
@@ -397,9 +397,7 @@ func wenda_qc_parms(ids *model.ImportDocumentsParms) error {
 	return writeConfig(&ids.WendaMergeBox, model.WENDA_QC_BASE)
 }
 
-func tripartite_form_parms(tf model.TripartiteFormParms) error {
-	tf.OutputFileFormat = "test"
-
+func tripartite_zhaipei_qc_parms(tf model.TripartiteFormParms) error {
 	tf.TripartiteQC = model.TripartiteQC{}
 	{
 		tf.TripartiteStatusList = []string{"momo第三方交換", "補寄商品", "來回件"}
@@ -417,5 +415,5 @@ func tripartite_form_parms(tf model.TripartiteFormParms) error {
 		sourc.SpanSorts = []excelgo.SpanSort{{Span: "訂單編號-1", Order: excelgo.PositiveOrder}}
 		tf.Sourc = *sourc
 	}
-	return writeConfig(&tf, model.TRIPARTITE_FORM_BASE)
+	return writeConfig(&tf, model.TRIPARTITE_ZHAIPEI_QC_BASE)
 }

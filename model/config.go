@@ -133,7 +133,6 @@ type ImportDocumentsParms struct {
 }
 
 type TripartiteFormParms struct {
-	OutputFileFormat string `json:"output_file_format"`
 	TripartiteQC
 }
 
