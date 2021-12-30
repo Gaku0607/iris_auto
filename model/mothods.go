@@ -16,9 +16,9 @@ const (
 const (
 	SHIPP_LIST_BASE            = "SHIPP_LIST.json"
 	SPILT_AND_EXPORT_BASE      = "SPILT_AND_EXPORT.json"
-	QC_CSV_BASE                = "QC_CSV.json"
-	WENDA_QC_BASE              = "WENDA_QC.json"
-	ZHAIPEI_QC_BASE            = "ZHAIPEI_QC.json"
+	QC_CSV_BASE                = "qc_form/QC_CSV.json"
+	WENDA_QC_BASE              = "qc_form/WENDA_QC.json"
+	ZHAIPEI_QC_BASE            = "qc_form/ZHAIPEI_QC.json"
 	TRIPARTITE_FORM_BASE       = "tripartite/TRIPARTITE_FORM.json"
 	TRIPARTITE_ZHAIPEI_QC_BASE = "tripartite/TRIPARTITE_ZHAIPEI_QC.json"
 	TRIPARTITE_RETURN_BASE     = "tripartite/TRIPARTITE_RETURN.json"

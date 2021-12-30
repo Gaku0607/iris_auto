@@ -39,18 +39,8 @@ func WriteDefaultConfig() error {
 		return err
 	}
 
-	//QC_Detail
-	if err := import_docments_parms(&s.IDS); err != nil {
-		return err
-	}
-
-	//穩達ＱＣ
-	if err := wenda_qc_parms(&s.IDS); err != nil {
-		return err
-	}
-
-	//宅配通ＱＣ
-	if err := zhaipei_qc_parms(&s.IDS); err != nil {
+	//QC表單
+	if err := qc_form_parms(&s.IDS); err != nil {
 		return err
 	}
 
@@ -162,6 +152,29 @@ func shipping_list_parms(sl model.ShippingListParms) error {
 		HistoryEnvPath:   "/Users/gaku/Documents/GitHub/iris_auto/config/shipplist_history.env",
 	}
 	return writeConfig(&sl, model.SHIPP_LIST_BASE)
+}
+
+//***************************************
+//****************QC FORM****************
+//***************************************
+
+func qc_form_parms(ids *model.ImportDocumentsParms) error {
+
+	//QC表單格式
+	if err := import_docments_parms(ids); err != nil {
+		return err
+	}
+
+	//宅配QC格式
+	if err := zhaipei_qc_parms(ids); err != nil {
+		return err
+	}
+
+	//穩達QC格式
+	if err := wenda_qc_parms(ids); err != nil {
+		return err
+	}
+	return nil
 }
 
 func import_docments_parms(ids *model.ImportDocumentsParms) error {

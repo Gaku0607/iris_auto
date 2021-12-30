@@ -75,32 +75,9 @@ func loadPath() error {
 
 func loadEnv() error {
 
-	data, err := load(model.QC_CSV_BASE)
-	if err != nil {
-		return err
-	}
-	if err = json.Unmarshal(data, &model.Environment.IDS); err != nil {
-		return err
-	}
-
-	//穩達
-	if data, err = load(model.WENDA_QC_BASE); err != nil {
-		return err
-	}
-	if err := json.Unmarshal(data, &model.Environment.IDS.WendaMergeBox); err != nil {
-		return err
-	}
-
-	//宅配通
-	if data, err = load(model.ZHAIPEI_QC_BASE); err != nil {
-		return err
-	}
-	if err := json.Unmarshal(data, &model.Environment.IDS.ZhaipeiMergeBox); err != nil {
-		return err
-	}
-
 	//出倉單
-	if data, err = load(model.SHIPP_LIST_BASE); err != nil {
+	data, err := load(model.SHIPP_LIST_BASE)
+	if err != nil {
 		return err
 	}
 	if err := json.Unmarshal(data, &model.Environment.SL); err != nil {
@@ -113,6 +90,34 @@ func loadEnv() error {
 	}
 	if err = json.Unmarshal(data, &model.Environment.SE); err != nil {
 		return err
+	}
+
+	//QC表單
+	{
+
+		//ＱＣ表單格式
+		if data, err = load(model.QC_CSV_BASE); err != nil {
+			return err
+		}
+		if err = json.Unmarshal(data, &model.Environment.IDS); err != nil {
+			return err
+		}
+
+		//穩達
+		if data, err = load(model.WENDA_QC_BASE); err != nil {
+			return err
+		}
+		if err := json.Unmarshal(data, &model.Environment.IDS.WendaMergeBox); err != nil {
+			return err
+		}
+
+		//宅配通
+		if data, err = load(model.ZHAIPEI_QC_BASE); err != nil {
+			return err
+		}
+		if err := json.Unmarshal(data, &model.Environment.IDS.ZhaipeiMergeBox); err != nil {
+			return err
+		}
 	}
 
 	//三方表單
