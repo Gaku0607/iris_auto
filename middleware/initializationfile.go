@@ -14,7 +14,7 @@ import (
 	"github.com/Gaku0607/iris_auto/tool"
 )
 
-func InitTripartiteForm() augo.HandlerFunc {
+func InitTripartiteQCForm() augo.HandlerFunc {
 	datecol := 0
 	statuscol := 0
 	uniquecodecol := 0
@@ -47,8 +47,8 @@ func InitTripartiteForm() augo.HandlerFunc {
 			}
 
 			datecol = sourc.GetCol(model.Environment.TF.TripartiteQC.DateSpan).Col
-			statuscol = sourc.GetCol(model.Environment.TF.TripartiteQC.StatusSpan).Col
-			uniquecodecol = sourc.GetCol(model.Environment.TF.TripartiteQC.UniqueCodeSpan).Col
+			statuscol = sourc.GetCol(model.Environment.TF.TripartiteQC.GoodsStatusSpan).Col
+			uniquecodecol = sourc.GetCol(model.Environment.TF.UniqueCodeSpan).Col
 
 			//刪除底部所有空白方便計算
 			rows = removeBlankRow(rows, uniquecodecol)
@@ -91,6 +91,7 @@ func InitTripartiteForm() augo.HandlerFunc {
 
 				if model.IsTripartiteStatus(row[statuscol]) {
 					code := strings.TrimSpace(row[uniquecodecol])
+					code = tool.GetUniqueCode(code)
 					gs[code] = row[statuscol]
 				}
 			}

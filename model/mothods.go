@@ -9,6 +9,7 @@ const (
 	THIRD_PARTY_QC_MOTHOD        = "第三方ＱＣ"
 	TRIPARTITE_SPILT_MOTHOD      = "三方專車宅配"
 	TRIPARTITE_ZHAIPEI_QC_MOTHOD = "三方宅配ＱＣ"
+	TRIPARTITE_RETURN_MOTHOD     = "三方回傳"
 )
 
 //配置檔案名
@@ -18,6 +19,7 @@ const (
 	QC_CSV_BASE                = "QC_CSV.json"
 	WENDA_QC_BASE              = "WENDA_QC.json"
 	ZHAIPEI_QC_BASE            = "ZHAIPEI_QC.json"
-	TRIPARTITE_FORM_BASE       = "TRIPARTITE_FORM.json"
-	TRIPARTITE_ZHAIPEI_QC_BASE = "TRIPARTITE_ZHAIPEI_QC.json"
+	TRIPARTITE_FORM_BASE       = "tripartite/TRIPARTITE_FORM.json"
+	TRIPARTITE_ZHAIPEI_QC_BASE = "tripartite/TRIPARTITE_ZHAIPEI_QC.json"
+	TRIPARTITE_RETURN_BASE     = "tripartite/TRIPARTITE_RETURN.json"
 )

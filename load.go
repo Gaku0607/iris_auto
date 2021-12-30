@@ -116,15 +116,35 @@ func loadEnv() error {
 	}
 
 	//三方表單
-	if data, err = load(model.TRIPARTITE_ZHAIPEI_QC_BASE); err != nil {
-		return err
-	}
-	if err = json.Unmarshal(data, &model.Environment.TF); err != nil {
-		return err
-	}
+	{
 
-	if err = initTripartiteStatusForm(); err != nil {
-		return err
+		//三方表格格式
+		if data, err = load(model.TRIPARTITE_FORM_BASE); err != nil {
+			return err
+		}
+		if err = json.Unmarshal(data, &model.Environment.TF.TripartiteFile); err != nil {
+			return err
+		}
+
+		//三方宅配ＱＣ
+		if data, err = load(model.TRIPARTITE_ZHAIPEI_QC_BASE); err != nil {
+			return err
+		}
+		if err = json.Unmarshal(data, &model.Environment.TF.TripartiteQC); err != nil {
+			return err
+		}
+
+		//三方回傳
+		if data, err = load(model.TRIPARTITE_RETURN_BASE); err != nil {
+			return err
+		}
+		if err = json.Unmarshal(data, &model.Environment.TF.TripartiteReturn); err != nil {
+			return err
+		}
+
+		if err = initTripartiteStatusForm(); err != nil {
+			return err
+		}
 	}
 
 	return nil

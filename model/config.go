@@ -132,15 +132,33 @@ type ImportDocumentsParms struct {
 	} `json:"wanda_merge_box,omitempty"`
 }
 
+//**************************************
+//**************Tripartite**************
+//**************************************
+
 type TripartiteFormParms struct {
-	TripartiteQC
+	TripartiteQC     `json:"tripartite_qc"`
+	TripartiteReturn `json:"tripartite_return"`
+	TripartiteFile   `json:"tripartite_file"`
+}
+
+type TripartiteFile struct {
+	TripartiteInputFormat string `json:"tripartite_Input_format"`
+	SheetName             string `json:"sheet_name"`
+	StatusTagCol          string `json:"status_tag_col"`
+	UniqueCodeSpan        string `json:"unique_code_span"`
+}
+
+type TripartiteReturn struct {
+	excelgo.Sourc       `json:"sourc"`
+	GoodsCodeSpan       string `json:"goods_code_span"`
+	GoodsReturnDateSpan string `json:"goods_return_date_span"`
+	TotalSpan           string `json:"total_span"`
 }
 
 type TripartiteQC struct {
-	TripartiteStatusList  []string `json:"tripartite_status_list"`
-	excelgo.Sourc         `json:"sourc"`
-	TripartiteInputFormat string `json:"tripartite_Input_format"`
-	DateSpan              string `json:"date_span"`
-	UniqueCodeSpan        string `json:"unique_code_span"`
-	StatusSpan            string `json:"status_span"`
+	excelgo.Sourc        `json:"sourc"`
+	TripartiteStatusList []string `json:"tripartite_status_list"`
+	DateSpan             string   `json:"date_span"`
+	GoodsStatusSpan      string   `json:"goods_status_span"`
 }

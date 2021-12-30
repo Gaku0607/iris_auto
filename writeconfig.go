@@ -35,7 +35,7 @@ func WriteDefaultConfig() error {
 	}
 
 	//三方表單
-	if err := tripartite_zhaipei_qc_parms(s.TF); err != nil {
+	if err := tripartite_form_parms(&s.TF); err != nil {
 		return err
 	}
 
@@ -397,23 +397,76 @@ func wenda_qc_parms(ids *model.ImportDocumentsParms) error {
 	return writeConfig(&ids.WendaMergeBox, model.WENDA_QC_BASE)
 }
 
-func tripartite_zhaipei_qc_parms(tf model.TripartiteFormParms) error {
-	tf.TripartiteQC = model.TripartiteQC{}
+//**************************************
+//**************Tripartite**************
+//**************************************
+
+func tripartite_form_parms(tf *model.TripartiteFormParms) error {
+
+	//三方表單格式
+	if err := tripartite_file_parms(tf); err != nil {
+		return err
+	}
+
+	//三方宅配ＱＣ
+	if err := tripartite_zhaipei_qc_parms(tf); err != nil {
+		return err
+	}
+
+	//三方回傳
+	if err := triparite_return_parms(tf); err != nil {
+		return err
+	}
+	return nil
+}
+
+func tripartite_file_parms(tf *model.TripartiteFormParms) error {
+
+	tff := model.TripartiteFile{}
+	tff.SheetName = "處理中"
+	tff.StatusTagCol = "C"
+	tff.TripartiteInputFormat = "三方連動"
+	tff.UniqueCodeSpan = "訂單編號"
+	tf.TripartiteFile = tff
+
+	return writeConfig(&tff, model.TRIPARTITE_FORM_BASE)
+}
+
+func triparite_return_parms(tf *model.TripartiteFormParms) error {
+
+	trf := model.TripartiteReturn{}
+	trf.GoodsReturnDateSpan = "商品退倉日期"
+	trf.GoodsCodeSpan = "JANCODE"
+	trf.TotalSpan = "實收數量"
+
+	sourc := excelgo.NewSourc(
+		tf.SheetName,
+		excelgo.NewCol(trf.GoodsReturnDateSpan),
+		excelgo.NewCol(trf.GoodsCodeSpan),
+		excelgo.NewCol(trf.TotalSpan),
+		excelgo.NewCol(tf.UniqueCodeSpan),
+	)
+
+	trf.Sourc = *sourc
+
+	return writeConfig(&trf, model.TRIPARTITE_RETURN_BASE)
+}
+
+func tripartite_zhaipei_qc_parms(tf *model.TripartiteFormParms) error {
+	tqc := model.TripartiteQC{}
 	{
-		tf.TripartiteStatusList = []string{"momo第三方交換", "補寄商品", "來回件"}
-		tf.DateSpan = "聯絡日"
-		tf.StatusSpan = "作業指示"
-		tf.UniqueCodeSpan = "訂單編號"
-		tf.TripartiteInputFormat = "三方連動"
+		tqc.TripartiteStatusList = []string{"momo第三方交換", "補寄商品", "來回件"}
+		tqc.DateSpan = "聯絡日"
+		tqc.GoodsStatusSpan = "作業指示"
 
 		sourc := excelgo.NewSourc(
-			"處理中",
-			excelgo.NewCol(tf.DateSpan),
-			excelgo.NewCol(tf.StatusSpan),
+			tf.SheetName,
+			excelgo.NewCol(tqc.DateSpan),
+			excelgo.NewCol(tqc.GoodsStatusSpan),
 			excelgo.NewCol(tf.UniqueCodeSpan),
 		)
 		sourc.SpanSorts = []excelgo.SpanSort{{Span: "訂單編號-1", Order: excelgo.PositiveOrder}}
-		tf.Sourc = *sourc
+		tqc.Sourc = *sourc
 	}
-	return writeConfig(&tf, model.TRIPARTITE_ZHAIPEI_QC_BASE)
+	return writeConfig(&tqc, model.TRIPARTITE_ZHAIPEI_QC_BASE)
 }

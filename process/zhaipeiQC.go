@@ -86,7 +86,7 @@ func (z *ZhaipeiQC) TripartiteQC(c *augo.Context) {
 	defer z.resetTripartiteStatusList()
 
 	for _, row := range rows {
-		status, ok := gs[row[codecol.Col].(string)]
+		status, ok := gs[tool.GetUniqueCode(row[codecol.Col].(string))]
 		if !ok {
 			status = model.TRIPARTITE_STATUS_NULL
 		}

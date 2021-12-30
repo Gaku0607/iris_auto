@@ -33,11 +33,15 @@ func Routers(c *augo.Collector) {
 		//tripartite-group
 		Tripartite_Group := Visit_Group.Group("三方反品")
 		{
+
+			//tripartite-return
+			Tripartite_Group.HandlerWithVisit(model.TRIPARTITE_RETURN_MOTHOD, nil)
+
 			//tripartite-spilt-and-export
 			Tripartite_Group.HandlerWithVisit(model.TRIPARTITE_SPILT_MOTHOD, SplitService.SplitAndExport(process.TripartiteSplitFiles))
 
 			//tripartite-qc-group
-			Tripartite_QC_Group := Tripartite_Group.Group(augo.GetPathChar(), middleware.InitTripartiteForm(), middleware.InitQCSourceFiles)
+			Tripartite_QC_Group := Tripartite_Group.Group(augo.GetPathChar(), middleware.InitTripartiteQCForm(), middleware.InitQCSourceFiles)
 			{
 				//tripartite-zhaipei-qc
 				Tripartite_QC_Group.HandlerWithVisit(model.TRIPARTITE_ZHAIPEI_QC_MOTHOD, ZhaipeiQCService.TripartiteQC)
